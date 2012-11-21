@@ -2,7 +2,7 @@ module XYZService
 
   # Build a filename for the target with the following format:
   #   [day of month zero-padded][three-letter prefix] \
-  #   _[kind]_[age_if_kind_personal]_[target.id] \
+  #   [kind]_[age_if_kind_personal]_[target.id] \
   #   _[8 random chars]_[10 first chars of title].jpg
   #
   # @params  target the filename
