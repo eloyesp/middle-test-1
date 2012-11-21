@@ -9,18 +9,32 @@ module XYZService
   # @return [String] filename of the target
 
   def self.xyz_filename(target)
-    filename = "#{target.publish_on.strftime("%d")}"
-    filename << "#{target.xyz_category_prefix}"
-    filename << "#{target.kind.gsub("_", "")}"
-    filename << "_%03d" % (target.age || 0) if target.personal?
-    filename << "_#{target.id.to_s}"
-    filename << "_#{Digest::SHA1.hexdigest(rand(10000).to_s)[0,8]}"
-    truncated_title = target.title.gsub(/[^\[a-z\]]/i, '').downcase
-    truncate_to = truncated_title.length > 9 ? 9 : truncated_title.length
-    filename << "_#{truncated_title[0..(truncate_to)]}"
-    filename << ".jpg"
-    return filename
+    [ build_header(target),
+      target.id.to_s,
+      random_chars,
+      truncate_title(target.title) ].join("_") << ".jpg"
   end
+
+  private
+
+    def self.build_header target
+      [ target.publish_on.strftime("%d"),
+        target.xyz_category_prefix.to_s,
+        target.kind.gsub("_", ""),
+        age_if_kind_personal(target) ].join
+    end
+
+    def self.truncate_title title
+      title.downcase.gsub(/[^\[a-z\]]/, '')[0..9]
+    end
+
+    def self.random_chars
+      Digest::SHA1.hexdigest(rand(10000).to_s)[0,8]
+    end
+
+    def self.age_if_kind_personal target
+      "_%03d" % (target.age || 0) if target.personal?
+    end
 
 end
 
